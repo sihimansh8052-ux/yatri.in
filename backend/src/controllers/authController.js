@@ -130,11 +130,14 @@ const fallbackDemoProfiles = {
   }
 };
 
-const getFallbackDemoUser = async (credential, password) => {
-  if (isDatabaseConnected() || password !== "password123") return null;
+const getDemoUser = async (credential, password) => {
+  if (password !== "password123") return null;
   const email = String(credential || "").trim().toLowerCase();
   const demo = fallbackDemoProfiles[email];
   if (!demo) return null;
+  if (isDatabaseConnected()) {
+    return User.findOne({ email }) || User.create(demo);
+  }
   return fallbackStore.findUserByEmail(email) || fallbackStore.createUser(demo);
 };
 
@@ -217,9 +220,9 @@ export const login = async (req, res) => {
       : user && (await fallbackStore.comparePassword(user, password));
 
     if (!validPassword) {
-      const fallbackDemoUser = await getFallbackDemoUser(credential, password);
-      if (fallbackDemoUser) {
-        user = fallbackDemoUser;
+      const demoUser = await getDemoUser(credential, password);
+      if (demoUser) {
+        user = demoUser;
         validPassword = true;
       }
     }
