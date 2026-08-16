@@ -11,6 +11,7 @@ const hotelSchema = new mongoose.Schema(
     rating: { type: Number, default: 0 },
     popularity: { type: Number, default: 50 },
     amenities: [String],
+    aliases: [String],
     images: [String],
     category: { type: String, default: "hotel" },
     location: {

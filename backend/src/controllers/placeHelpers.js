@@ -30,6 +30,12 @@ export const applyQueryFilters = (items, { category, price, rating, sort }) => {
 export const normalizeCollectionItem = (item) =>
   typeof item.toObject === "function" ? item.toObject() : item;
 
+const normalizeSearchText = (value) =>
+  String(value || "")
+    .toLowerCase()
+    .replace(/\bpayagraj\b/g, "prayagraj")
+    .replace(/\ballahabad\b/g, "prayagraj");
+
 export const filterByCommonQuery = (items, query = {}) => {
   const {
     city,
@@ -47,7 +53,7 @@ export const filterByCommonQuery = (items, query = {}) => {
   let next = items.map(normalizeCollectionItem);
 
   if (city) {
-    const destinationNeedle = String(city).toLowerCase();
+    const destinationNeedle = normalizeSearchText(city);
     next = next.filter((item) => {
       const haystack = [
         item.name,
@@ -57,25 +63,29 @@ export const filterByCommonQuery = (items, query = {}) => {
         item.description,
         ...(item.tags || []),
         ...(item.cuisine || []),
-        ...(item.amenities || [])
+        ...(item.amenities || []),
+        ...(item.aliases || [])
       ]
         .filter(Boolean)
         .join(" ")
-        .toLowerCase();
+        .toLowerCase()
+        .replace(/\ballahabad\b/g, "prayagraj");
       return haystack.includes(destinationNeedle);
     });
   }
 
   if (search) {
-    const needle = String(search).toLowerCase();
+    const needle = normalizeSearchText(search);
     next = next.filter(
       (item) =>
-        item.name?.toLowerCase().includes(needle) ||
-        item.city?.toLowerCase().includes(needle) ||
-        item.description?.toLowerCase().includes(needle) ||
-        item.address?.toLowerCase().includes(needle) ||
-        item.tags?.some((tag) => tag.toLowerCase().includes(needle)) ||
-        item.cuisine?.some((tag) => tag.toLowerCase().includes(needle))
+        normalizeSearchText(item.name).includes(needle) ||
+        normalizeSearchText(item.city).includes(needle) ||
+        normalizeSearchText(item.description).includes(needle) ||
+        normalizeSearchText(item.address).includes(needle) ||
+        item.tags?.some((tag) => normalizeSearchText(tag).includes(needle)) ||
+        item.cuisine?.some((tag) => normalizeSearchText(tag).includes(needle)) ||
+        item.amenities?.some((tag) => normalizeSearchText(tag).includes(needle)) ||
+        item.aliases?.some((tag) => normalizeSearchText(tag).includes(needle))
     );
   }
 

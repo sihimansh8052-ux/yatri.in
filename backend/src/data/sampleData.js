@@ -133,6 +133,38 @@ export const hotelSeeds = [
     images: ["https://images.unsplash.com/photo-1506905925346-21bda4d32df4"],
     category: "hotel",
     location: { type: "Point", coordinates: [77.1887, 32.2468] }
+  },
+  {
+    _id: "680e75b20000000000000019",
+    name: "Sangam Riverside Hotel",
+    description: "Comfort stay near Triveni Sangam, Civil Lines, and Prayagraj pilgrimage routes.",
+    address: "Civil Lines, Prayagraj",
+    city: "Prayagraj",
+    priceLevel: "mid",
+    pricePerNight: 4500,
+    rating: 4.5,
+    popularity: 91,
+    amenities: ["WiFi", "Breakfast", "Cab pickup", "Family rooms"],
+    images: ["https://images.unsplash.com/photo-1564501049412-61c2a3083791"],
+    category: "hotel",
+    aliases: ["Allahabad", "Prayag", "Payagraj", "Triveni Sangam"],
+    location: { type: "Point", coordinates: [81.8463, 25.4358] }
+  },
+  {
+    _id: "680e75b20000000000000020",
+    name: "Kumbh Heritage Stay",
+    description: "Pilgrim-friendly hotel with easy access to Sangam, temples, ghats, and station transfers.",
+    address: "Near Sangam Road, Prayagraj",
+    city: "Prayagraj",
+    priceLevel: "budget",
+    pricePerNight: 2600,
+    rating: 4.2,
+    popularity: 84,
+    amenities: ["WiFi", "Early breakfast", "Temple route cab", "Laundry"],
+    images: ["https://images.unsplash.com/photo-1611892440504-42a792e24d32"],
+    category: "hotel",
+    aliases: ["Allahabad", "Prayag", "Payagraj", "Sangam", "Kumbh"],
+    location: { type: "Point", coordinates: [81.8857, 25.432] }
   }
 ];
 
