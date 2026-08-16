@@ -17,6 +17,7 @@ import busRoutes from "./src/routes/busRoutes.js";
 import trainRoutes from "./src/routes/trainRoutes.js";
 import packageRoutes from "./src/routes/packageRoutes.js";
 import utilityRoutes from "./src/routes/utilityRoutes.js";
+import { ensureSeedData } from "./src/data/ensureSeedData.js";
 import { notFound, errorHandler } from "./src/middleware/errorMiddleware.js";
 import { csrfProtection, rateLimit, sanitizeInput, securityHeaders } from "./src/middleware/securityMiddleware.js";
 
@@ -89,5 +90,6 @@ app.use(errorHandler);
 
 app.listen(port, async () => {
   console.log(`Yatri.in backend running on port ${port}`);
-  await connectDB();
+  const connected = await connectDB();
+  if (connected) await ensureSeedData();
 });
