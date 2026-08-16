@@ -123,6 +123,7 @@ export default function AuthPanel({ onAuthenticated }) {
   const [showPassword, setShowPassword] = useState(false);
   const [loading, setLoading] = useState(false);
   const [toast, setToast] = useState(null);
+  const [formNotice, setFormNotice] = useState(null);
   const [countdown, setCountdown] = useState(0);
   const [successMode, setSuccessMode] = useState(null);
   const [touched, setTouched] = useState({});
@@ -161,6 +162,7 @@ export default function AuthPanel({ onAuthenticated }) {
   ]);
 
   const notify = (type, message) => {
+    setFormNotice({ type, message });
     setToast({ type, message });
     window.setTimeout(() => setToast(null), 4500);
   };
@@ -194,6 +196,7 @@ export default function AuthPanel({ onAuthenticated }) {
 
   const register = async (event) => {
     event.preventDefault();
+    setFormNotice(null);
     setTouched(Object.fromEntries(Object.keys(registerDefaults).map((key) => [key, true])));
     if (Object.keys(validation).length) return;
     setLoading(true);
@@ -202,7 +205,7 @@ export default function AuthPanel({ onAuthenticated }) {
       notify("success", data.devOtp ? `Account created. Demo OTP: ${data.devOtp}` : "Account created successfully");
       finishAuth(data);
     } catch (error) {
-      notify("error", error.response?.data?.message || "Registration failed");
+      notify("error", error.response?.data?.message || error.message || "Registration failed");
     } finally {
       setLoading(false);
     }
@@ -439,10 +442,12 @@ export default function AuthPanel({ onAuthenticated }) {
               ["forgot", "Reset"]
             ].map(([key, label]) => (
               <button
+                type="button"
                 key={key}
                 onClick={() => {
                   setMode(key);
                   setTouched({});
+                  setFormNotice(null);
                 }}
                 className={`rounded-md px-2 py-2 transition ${mode === key ? "bg-white text-luxury-blue shadow-gold" : "text-white/80 hover:bg-white/10"}`}
               >
@@ -450,6 +455,18 @@ export default function AuthPanel({ onAuthenticated }) {
               </button>
             ))}
           </div>
+
+          {formNotice && (
+            <div
+              className={`mb-4 rounded-md border px-3 py-2 text-sm ${
+                formNotice.type === "error"
+                  ? "border-rose-300/40 bg-rose-950/60 text-rose-50"
+                  : "border-emerald-300/40 bg-emerald-950/60 text-emerald-50"
+              }`}
+            >
+              {formNotice.message}
+            </div>
+          )}
 
           <AnimatePresence mode="wait">
             {successMode && (
@@ -576,12 +593,12 @@ export default function AuthPanel({ onAuthenticated }) {
             {mode === "register" && (
               <motion.form key="register" variants={formVariants} initial="hidden" animate="visible" exit="exit" onSubmit={register} className="space-y-4">
                 <div className="grid gap-3 sm:grid-cols-2">
-                  <TextInput icon={FiUser} placeholder="Full Name" value={registerForm.fullName} onBlur={() => setTouched({ ...touched, fullName: true })} onChange={(value) => setRegisterForm({ ...registerForm, fullName: value })} error={touched.fullName && validation.fullName} />
-                  <TextInput icon={FiMail} placeholder="Email" value={registerForm.email} onBlur={() => setTouched({ ...touched, email: true })} onChange={(value) => setRegisterForm({ ...registerForm, email: value })} error={touched.email && validation.email} />
-                  <TextInput icon={FiPhone} placeholder="Mobile Number" value={registerForm.mobile} onBlur={() => setTouched({ ...touched, mobile: true })} onChange={(value) => setRegisterForm({ ...registerForm, mobile: value })} error={touched.mobile && validation.mobile} />
-                  <TextInput icon={FiMapPin} placeholder="Country" value={registerForm.country} onChange={(value) => setRegisterForm({ ...registerForm, country: value })} />
-                  <TextInput icon={FiMapPin} placeholder="State" value={registerForm.state} onBlur={() => setTouched({ ...touched, state: true })} onChange={(value) => setRegisterForm({ ...registerForm, state: value })} error={touched.state && validation.state} />
-                  <TextInput icon={FiMapPin} placeholder="City" value={registerForm.city} onBlur={() => setTouched({ ...touched, city: true })} onChange={(value) => setRegisterForm({ ...registerForm, city: value })} error={touched.city && validation.city} />
+                  <TextInput icon={FiUser} name="fullName" placeholder="Full Name" value={registerForm.fullName} onBlur={() => setTouched({ ...touched, fullName: true })} onChange={(value) => setRegisterForm({ ...registerForm, fullName: value })} error={touched.fullName && validation.fullName} />
+                  <TextInput icon={FiMail} name="email" type="email" placeholder="Email" value={registerForm.email} onBlur={() => setTouched({ ...touched, email: true })} onChange={(value) => setRegisterForm({ ...registerForm, email: value })} error={touched.email && validation.email} />
+                  <TextInput icon={FiPhone} name="mobile" type="tel" placeholder="Mobile Number" value={registerForm.mobile} onBlur={() => setTouched({ ...touched, mobile: true })} onChange={(value) => setRegisterForm({ ...registerForm, mobile: value })} error={touched.mobile && validation.mobile} />
+                  <TextInput icon={FiMapPin} name="country" placeholder="Country" value={registerForm.country} onChange={(value) => setRegisterForm({ ...registerForm, country: value })} />
+                  <TextInput icon={FiMapPin} name="state" placeholder="State" value={registerForm.state} onBlur={() => setTouched({ ...touched, state: true })} onChange={(value) => setRegisterForm({ ...registerForm, state: value })} error={touched.state && validation.state} />
+                  <TextInput icon={FiMapPin} name="city" placeholder="City" value={registerForm.city} onBlur={() => setTouched({ ...touched, city: true })} onChange={(value) => setRegisterForm({ ...registerForm, city: value })} error={touched.city && validation.city} />
 
                   {/* Language Selection */}
                   <div>
@@ -611,7 +628,7 @@ export default function AuthPanel({ onAuthenticated }) {
                   </div>
 
                   <div>
-                    <PasswordInput placeholder="Password" value={registerForm.password} show={showPassword} onToggle={() => setShowPassword(!showPassword)} onBlur={() => setTouched({ ...touched, password: true })} onChange={(value) => setRegisterForm({ ...registerForm, password: value })} error={touched.password && validation.password} />
+                    <PasswordInput name="password" placeholder="Password" value={registerForm.password} show={showPassword} onToggle={() => setShowPassword(!showPassword)} onBlur={() => setTouched({ ...touched, password: true })} onChange={(value) => setRegisterForm({ ...registerForm, password: value })} error={touched.password && validation.password} />
                     {registerForm.password && (
                       <div className="mt-2">
                         <div className="flex justify-between items-center text-[10px] text-white/70 font-bold mb-1">
@@ -624,7 +641,7 @@ export default function AuthPanel({ onAuthenticated }) {
                       </div>
                     )}
                   </div>
-                  <PasswordInput placeholder="Confirm Password" value={registerForm.confirmPassword} show={showPassword} onToggle={() => setShowPassword(!showPassword)} onBlur={() => setTouched({ ...touched, confirmPassword: true })} onChange={(value) => setRegisterForm({ ...registerForm, confirmPassword: value })} error={touched.confirmPassword && validation.confirmPassword} />
+                  <PasswordInput name="confirmPassword" placeholder="Confirm Password" value={registerForm.confirmPassword} show={showPassword} onToggle={() => setShowPassword(!showPassword)} onBlur={() => setTouched({ ...touched, confirmPassword: true })} onChange={(value) => setRegisterForm({ ...registerForm, confirmPassword: value })} error={touched.confirmPassword && validation.confirmPassword} />
                 </div>
                 <div className="relative">
                   <FiUpload className="pointer-events-none absolute left-3 top-3.5 h-4 w-4 text-white/55" />
@@ -734,24 +751,24 @@ function validate(mode, { loginForm, registerForm, otpForm, resetForm }) {
   return errors;
 }
 
-function TextInput({ icon: Icon, placeholder, value, onChange, onBlur, error }) {
+function TextInput({ icon: Icon, name, type = "text", placeholder, value, onChange, onBlur, error }) {
   return (
     <label className="block">
       <div className="relative">
         <Icon className="pointer-events-none absolute left-3 top-3.5 h-4 w-4 text-white/55" />
-        <input className={inputClass} placeholder={placeholder} value={value} onBlur={onBlur} onChange={(event) => onChange(event.target.value)} />
+        <input name={name} type={type} className={inputClass} placeholder={placeholder} value={value} onBlur={onBlur} onChange={(event) => onChange(event.target.value)} />
       </div>
       {error && <p className="mt-1 text-xs text-rose-200">{error}</p>}
     </label>
   );
 }
 
-function PasswordInput({ placeholder = "Password", value, show, onToggle, onChange, onBlur, error }) {
+function PasswordInput({ name, placeholder = "Password", value, show, onToggle, onChange, onBlur, error }) {
   return (
     <label className="block">
       <div className="relative">
         <FiLock className="pointer-events-none absolute left-3 top-3.5 h-4 w-4 text-white/55" />
-        <input className={`${inputClass} pr-10`} type={show ? "text" : "password"} placeholder={placeholder} value={value} onBlur={onBlur} onChange={(event) => onChange(event.target.value)} />
+        <input name={name} className={`${inputClass} pr-10`} type={show ? "text" : "password"} placeholder={placeholder} value={value} onBlur={onBlur} onChange={(event) => onChange(event.target.value)} />
         <button type="button" className="absolute right-3 top-3.5 text-white/70 transition hover:text-white" onClick={onToggle}>
           {show ? <FiEyeOff className="h-4 w-4" /> : <FiEye className="h-4 w-4" />}
         </button>
