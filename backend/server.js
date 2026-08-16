@@ -28,10 +28,22 @@ const clientUrls = (process.env.CLIENT_URLS || process.env.CLIENT_URL || "http:/
   .split(",")
   .map((url) => url.trim())
   .filter(Boolean);
+const isAllowedOrigin = (origin) => {
+  if (!origin) return true;
+  if (clientUrls.includes(origin)) return true;
+  try {
+    const { hostname } = new URL(origin);
+    return hostname === "localhost" || hostname === "127.0.0.1" || hostname.endsWith(".vercel.app");
+  } catch (_error) {
+    return false;
+  }
+};
 
 app.use(
   cors({
-    origin: clientUrls,
+    origin(origin, callback) {
+      callback(null, isAllowedOrigin(origin));
+    },
     credentials: true
   })
 );
