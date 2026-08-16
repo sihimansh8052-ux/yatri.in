@@ -1,0 +1,55 @@
+{
+  "users": [
+    {
+      "name": "Demo Traveler",
+      "email": "demo@yatri.in",
+      "role": "user",
+      "interests": ["food", "culture"]
+    },
+    {
+      "name": "Yatri Admin",
+      "email": "admin@yatri.in",
+      "role": "admin",
+      "interests": ["food", "culture", "adventure"]
+    }
+  ],
+  "hotels": [
+    {
+      "name": "Lotus Residency",
+      "city": "New Delhi",
+      "priceLevel": "mid",
+      "pricePerNight": 4200,
+      "rating": 4.4
+    },
+    {
+      "name": "Aravalli Suites",
+      "city": "Gurugram",
+      "priceLevel": "premium",
+      "pricePerNight": 8600,
+      "rating": 4.7
+    }
+  ],
+  "restaurants": [
+    {
+      "name": "Spice Route Kitchen",
+      "city": "New Delhi",
+      "priceLevel": "mid",
+      "rating": 4.6,
+      "cuisine": ["North Indian", "Mughlai"]
+    }
+  ],
+  "places": [
+    {
+      "name": "India Gate",
+      "city": "New Delhi",
+      "category": "attraction",
+      "rating": 4.8
+    },
+    {
+      "name": "Janpath Market",
+      "city": "New Delhi",
+      "category": "local-experience",
+      "rating": 4.4
+    }
+  ]
+}

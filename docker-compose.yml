@@ -1,0 +1,29 @@
+version: "3.8"
+
+services:
+  app:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    ports:
+      - "5000:5000"
+    environment:
+      - PORT=5000
+      - MONGODB_URI=mongodb://mongo:27017/yatriin
+      - JWT_SECRET=yatri_in_production_jwt_secret_key_987654321
+      - JWT_REFRESH_SECRET=yatri_in_production_refresh_secret_key_123456789
+      - CLIENT_URL=http://localhost:5000
+    depends_on:
+      - mongo
+    restart: always
+
+  mongo:
+    image: mongo:latest
+    ports:
+      - "27017:27017"
+    volumes:
+      - mongo-data:/data/db
+    restart: always
+
+volumes:
+  mongo-data:
