@@ -397,29 +397,16 @@ export default function DashboardPage({ user, onUserRefresh, darkMode, setDarkMo
                   </Panel>
                 </div>
 
-                {/* Bookings table */}
-                <Panel title="Active Hotel Reservations" icon={CalendarDays}>
+                {/* Booked trips */}
+                <Panel title="My Booked Trips & Tickets" icon={CalendarDays}>
                   <div className="space-y-3">
-                    {realBookings.filter(b => b.bookingType === "hotel").map((booking) => (
-                      <div key={booking._id} className="flex justify-between items-center p-3 rounded-xl border border-slate-100 bg-slate-50 dark:bg-slate-950 dark:border-slate-800 text-xs">
-                        <div>
-                          <p className="font-black text-slate-950 dark:text-white text-sm">{booking.hotel?.name}</p>
-                          <p className="text-slate-400 mt-0.5">
-                            Stay Date: {booking.checkIn ? new Date(booking.checkIn).toLocaleDateString("en-IN") : "N/A"} • Code: #{booking._id}
-                          </p>
-                        </div>
-                        <div className="flex gap-2">
-                          <button
-                            onClick={() => alert("Invoice processing. Check downloaded documents.")}
-                            className="bg-white border border-slate-200 rounded-lg px-2.5 py-1 font-bold text-slate-600 hover:bg-slate-100"
-                          >
-                            Invoice
-                          </button>
-                          <span className="rounded-lg bg-emerald-100 text-emerald-800 font-bold px-2.5 py-1">
-                            {booking.status}
-                          </span>
-                        </div>
+                    {realBookings.length === 0 && (
+                      <div className="rounded-xl border border-dashed border-slate-200 bg-slate-50 p-4 text-xs font-semibold text-slate-500 dark:border-slate-800 dark:bg-slate-950">
+                        No booked trips yet. Use quick actions to book hotels, buses, trains, packages, or guides.
                       </div>
+                    )}
+                    {realBookings.map((booking) => (
+                      <BookingTripCard key={booking._id} booking={booking} />
                     ))}
                   </div>
                 </Panel>
@@ -437,34 +424,12 @@ export default function DashboardPage({ user, onUserRefresh, darkMode, setDarkMo
                   {/* Bookings & E-Tickets */}
                   <Panel title="Recent Bookings & E-Tickets" icon={CalendarDays}>
                     <div className="space-y-3">
-                      {realBookings.map((booking) => {
-                        const title = booking.bookingType === "hotel" 
-                          ? booking.hotel?.name 
-                          : booking.bookingType === "bus" 
-                            ? booking.bus?.operatorName || "Intercity Bus"
-                            : booking.bookingType === "package" 
-                              ? booking.package?.title || "Holiday Package"
-                              : booking.guide?.name || "Local Guide";
-                        const dateStr = booking.bookingType === "hotel" ? booking.checkIn : booking.date;
-                        const dateFormatted = dateStr ? new Date(dateStr).toLocaleDateString("en-IN") : "N/A";
-                        return (
-                          <Link
-                            key={booking._id}
-                            to={`/booking-confirmation/${booking._id}`}
-                            className="block rounded-xl border border-slate-100 bg-slate-50 p-3 text-xs text-slate-600 hover:bg-sky-50 dark:border-slate-800 dark:bg-slate-950 dark:text-slate-300 dark:hover:bg-slate-800 transition"
-                          >
-                            <div className="flex justify-between items-center">
-                              <span className="font-bold font-mono text-[10px] text-sky-500">#{booking._id}</span>
-                              <span className="text-[10px] bg-emerald-100 dark:bg-emerald-950 text-emerald-800 dark:text-emerald-300 px-2 py-0.5 rounded font-bold">{booking.status}</span>
-                            </div>
-                            <p className="mt-1 font-extrabold text-slate-900 dark:text-white text-sm">{title}</p>
-                            <div className="mt-1 flex justify-between text-[11px] text-slate-400">
-                              <span>Date: {dateFormatted}</span>
-                              {booking.totalPrice && <span className="font-bold text-slate-700 dark:text-slate-300">Rs. {booking.totalPrice}</span>}
-                            </div>
-                          </Link>
-                        );
-                      })}
+                      {realBookings.length === 0 && (
+                        <div className="rounded-xl bg-slate-50 p-3 text-xs font-semibold text-slate-500 dark:bg-slate-950">
+                          No bookings yet.
+                        </div>
+                      )}
+                      {realBookings.map((booking) => <BookingTripCard key={booking._id} booking={booking} compact />)}
                     </div>
                   </Panel>
 
@@ -564,6 +529,89 @@ function Metric({ icon: Icon, label, value }) {
       <p className="text-2xl font-black text-slate-900 dark:text-white">{value}</p>
     </motion.div>
   );
+}
+
+function BookingTripCard({ booking, compact = false }) {
+  const meta = getBookingMeta(booking);
+  return (
+    <Link
+      to={`/booking-confirmation/${booking._id}`}
+      className="block rounded-xl border border-slate-100 bg-slate-50 p-3 text-xs text-slate-600 transition hover:border-sky-200 hover:bg-sky-50 dark:border-slate-800 dark:bg-slate-950 dark:text-slate-300 dark:hover:bg-slate-800"
+    >
+      <div className="flex flex-wrap items-center justify-between gap-2">
+        <div className="min-w-0">
+          <div className="flex flex-wrap items-center gap-2">
+            <span className="rounded-md bg-sky-100 px-2 py-0.5 text-[10px] font-black uppercase text-sky-700 dark:bg-sky-950 dark:text-sky-300">
+              {meta.typeLabel}
+            </span>
+            <span className="font-mono text-[10px] font-bold text-slate-400">#{booking._id}</span>
+          </div>
+          <p className="mt-1 truncate text-sm font-extrabold text-slate-900 dark:text-white">{meta.title}</p>
+        </div>
+        <span className="rounded-lg bg-emerald-100 px-2.5 py-1 text-[10px] font-bold text-emerald-800 dark:bg-emerald-950 dark:text-emerald-300">
+          {booking.status || "confirmed"}
+        </span>
+      </div>
+      <div className={`mt-2 grid gap-1 text-[11px] text-slate-500 ${compact ? "" : "sm:grid-cols-3"}`}>
+        <span>{meta.dateLabel}: {meta.date}</span>
+        <span>{meta.route}</span>
+        <span className="font-bold text-slate-700 dark:text-slate-200">Rs. {Number(booking.totalPrice || 0).toLocaleString("en-IN")}</span>
+      </div>
+      {!compact && (
+        <div className="mt-3 inline-flex items-center gap-1.5 rounded-md bg-sky-500 px-2.5 py-1.5 text-[11px] font-bold text-white">
+          Open booking details
+        </div>
+      )}
+    </Link>
+  );
+}
+
+function getBookingMeta(booking) {
+  const dateValue = booking.bookingType === "hotel" ? booking.checkIn : booking.date;
+  const date = dateValue ? new Date(dateValue).toLocaleDateString("en-IN") : "N/A";
+  if (booking.bookingType === "hotel") {
+    return {
+      typeLabel: "Hotel",
+      title: booking.hotel?.name || booking.hotelName || "Hotel reservation",
+      dateLabel: "Check-in",
+      date,
+      route: booking.roomType ? `Room: ${booking.roomType}` : `${booking.guests || 1} guest(s)`
+    };
+  }
+  if (booking.bookingType === "bus") {
+    return {
+      typeLabel: "Bus",
+      title: booking.bus?.operatorName || "Bus ticket",
+      dateLabel: "Travel date",
+      date,
+      route: [booking.bus?.from, booking.bus?.to].filter(Boolean).join(" to ") || [booking.boardingPoint, booking.droppingPoint].filter(Boolean).join(" to ") || "Route selected"
+    };
+  }
+  if (booking.bookingType === "train") {
+    return {
+      typeLabel: "Train",
+      title: booking.train?.trainName || booking.train?.name || "Train ticket",
+      dateLabel: "Travel date",
+      date,
+      route: [booking.train?.from, booking.train?.to].filter(Boolean).join(" to ") || [booking.boardingPoint, booking.droppingPoint].filter(Boolean).join(" to ") || "Route selected"
+    };
+  }
+  if (booking.bookingType === "package") {
+    return {
+      typeLabel: "Package",
+      title: booking.package?.title || "Holiday package",
+      dateLabel: "Start date",
+      date,
+      route: booking.package?.destination || `${booking.durationDays || 1} day(s)`
+    };
+  }
+  return {
+    typeLabel: "Guide",
+    title: booking.guide?.name || "Local guide booking",
+    dateLabel: "Tour date",
+    date,
+    route: `${booking.durationDays || 1} day(s)`
+  };
 }
 
 function Panel({ title, icon: Icon, children }) {
