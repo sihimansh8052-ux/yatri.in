@@ -7,9 +7,10 @@ const addMatchStatus = (trains) => trains.map((train) => ({ ...train, routeMatch
 
 export const getTrains = async (req, res) => {
   try {
-    const { from, to } = req.query;
+    const { from, to, city, search } = req.query;
+    const destination = city || search;
     if (!isDatabaseConnected()) {
-      return res.json(addMatchStatus(fallbackStore.getTrains({ from, to })));
+      return res.json(addMatchStatus(fallbackStore.getTrains({ from, to: to || destination })));
     }
 
     const filter = {};
@@ -20,6 +21,17 @@ export const getTrains = async (req, res) => {
     if (to) {
       const toPattern = new RegExp(escapeRegex(to), "i");
       filter.$and = [...(filter.$and || []), { $or: [{ to: toPattern }, { droppingStations: toPattern }] }];
+    }
+    if (destination && !to && !from) {
+      const destinationPattern = new RegExp(escapeRegex(destination), "i");
+      filter.$or = [
+        { from: destinationPattern },
+        { to: destinationPattern },
+        { boardingStations: destinationPattern },
+        { droppingStations: destinationPattern },
+        { trainName: destinationPattern },
+        { trainType: destinationPattern }
+      ];
     }
 
     const trains = await Train.find(filter).sort({ rating: -1, price: 1 }).lean();

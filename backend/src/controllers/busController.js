@@ -8,9 +8,10 @@ const addMatchStatus = (buses) => buses.map((bus) => ({ ...bus, routeMatch: "exa
 
 export const getBuses = async (req, res) => {
   try {
-    const { from, to } = req.query;
+    const { from, to, city, search } = req.query;
+    const destination = city || search;
     if (!isDatabaseConnected()) {
-      const exactBuses = fallbackStore.getBuses({ from, to });
+      const exactBuses = fallbackStore.getBuses({ from, to: to || destination });
       return res.json(addMatchStatus(exactBuses));
     }
     const filter = {};
@@ -22,6 +23,17 @@ export const getBuses = async (req, res) => {
       const toPattern = new RegExp(escapeRegex(to), "i");
       const toOr = [{ to: toPattern }, { droppingPoints: toPattern }];
       filter.$and = [...(filter.$and || []), { $or: toOr }];
+    }
+    if (destination && !to && !from) {
+      const destinationPattern = new RegExp(escapeRegex(destination), "i");
+      filter.$or = [
+        { from: destinationPattern },
+        { to: destinationPattern },
+        { boardingPoints: destinationPattern },
+        { droppingPoints: destinationPattern },
+        { operatorName: destinationPattern },
+        { busType: destinationPattern }
+      ];
     }
     const exactBuses = await Bus.find(filter).sort({ rating: -1, price: 1 }).lean();
     res.json(addMatchStatus(exactBuses));

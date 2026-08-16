@@ -303,6 +303,36 @@ export const restaurantSeeds = [
     images: ["https://images.unsplash.com/photo-1630383249896-424e482df921"],
     category: "restaurant",
     location: { type: "Point", coordinates: [77.5738, 12.9437] }
+  },
+  {
+    _id: "680e75b20000000000000025",
+    name: "Sangam Kachori Corner",
+    description: "Popular Prayagraj breakfast stop for kachori sabzi, jalebi, chai, and quick local snacks.",
+    address: "Civil Lines, Prayagraj",
+    city: "Prayagraj",
+    priceLevel: "budget",
+    rating: 4.5,
+    popularity: 88,
+    cuisine: ["North Indian", "Street Food", "Breakfast"],
+    menuHighlights: ["Kachori sabzi", "Jalebi", "Masala chai"],
+    images: ["https://images.unsplash.com/photo-1601050690597-df0568f70950"],
+    category: "restaurant",
+    location: { type: "Point", coordinates: [81.8463, 25.4358] }
+  },
+  {
+    _id: "680e75b20000000000000026",
+    name: "Allahabad Chaat House",
+    description: "Local chaat and lassi stop near old market lanes, great for evening food walks.",
+    address: "Katra Market, Prayagraj",
+    city: "Prayagraj",
+    priceLevel: "budget",
+    rating: 4.4,
+    popularity: 84,
+    cuisine: ["Chaat", "Street Food", "Vegetarian"],
+    menuHighlights: ["Aloo tikki", "Dahi bhalla", "Lassi"],
+    images: ["https://images.unsplash.com/photo-1606491956689-2ea866880c84"],
+    category: "restaurant",
+    location: { type: "Point", coordinates: [81.8531, 25.4484] }
   }
 ];
 
@@ -761,6 +791,36 @@ export const placeSeeds = [
     images: ["https://images.unsplash.com/photo-1588096344356-9d7848f18c4f"],
     category: "devotional",
     location: { type: "Point", coordinates: [74.8765, 31.6200] }
+  },
+  {
+    _id: "680e75b20000000000000061",
+    name: "Triveni Sangam",
+    description: "Sacred confluence of Ganga, Yamuna, and Saraswati, known for snan, aarti, boat rides, and Kumbh visits.",
+    address: "Sangam, Prayagraj",
+    city: "Prayagraj",
+    rating: 4.9,
+    popularity: 99,
+    type: "famous",
+    bestTimeToVisit: "Sunrise, Magh Mela, and winter mornings",
+    tags: ["devotional", "sangam", "bhakti", "pooja", "boat ride", "family", "culture"],
+    images: ["https://images.unsplash.com/photo-1561361058-c24cecae35ca"],
+    category: "devotional",
+    location: { type: "Point", coordinates: [81.8857, 25.4320] }
+  },
+  {
+    _id: "680e75b20000000000000062",
+    name: "Anand Bhavan",
+    description: "Historic museum and family residence linked with India's freedom movement, ideal for culture travelers.",
+    address: "Tagore Town, Prayagraj",
+    city: "Prayagraj",
+    rating: 4.6,
+    popularity: 86,
+    type: "famous",
+    bestTimeToVisit: "Morning to afternoon",
+    tags: ["history", "museum", "culture", "family"],
+    images: ["https://images.unsplash.com/photo-1587474260584-136574528ed5"],
+    category: "attraction",
+    location: { type: "Point", coordinates: [81.8569, 25.4551] }
   }
 ];
 
@@ -1124,6 +1184,36 @@ export const busSeeds = [
     boardingPoints: ["Alambagh Bus Stand", "Charbagh"],
     droppingPoints: ["Varanasi Cantt", "Sigra", "Godowlia Drop Point"],
     availableSeats: 30
+  },
+  {
+    _id: "680e75b2000000000000004c",
+    operatorName: "Sangam Express Travels",
+    busType: "AC Sleeper 2+1",
+    from: "New Delhi",
+    to: "Prayagraj",
+    departureTime: "08:15 PM",
+    arrivalTime: "07:30 AM",
+    duration: "11h 15m",
+    price: 1250,
+    rating: 4.5,
+    boardingPoints: ["Anand Vihar ISBT", "Noida Sector 62", "Yamuna Expressway Pickup"],
+    droppingPoints: ["Prayagraj Civil Lines", "Zero Road Bus Stand", "Sangam Road"],
+    availableSeats: 24
+  },
+  {
+    _id: "680e75b2000000000000004d",
+    operatorName: "Awadh Sangam Comfort",
+    busType: "AC Seater/Sleeper",
+    from: "Lucknow",
+    to: "Prayagraj",
+    departureTime: "06:45 AM",
+    arrivalTime: "11:45 AM",
+    duration: "5h 00m",
+    price: 520,
+    rating: 4.4,
+    boardingPoints: ["Alambagh Bus Stand", "Charbagh"],
+    droppingPoints: ["Prayagraj Civil Lines", "Prayagraj Junction", "Sangam Road"],
+    availableSeats: 34
   }
 ];
 
@@ -1296,6 +1386,40 @@ export const trainSeeds = [
     boardingStations: ["Lucknow Charbagh"],
     droppingStations: ["Varanasi Junction", "Banaras"],
     availableSeats: 150,
+    classes: ["2S", "CC"]
+  },
+  {
+    _id: "680e75b20000000000000068",
+    trainNumber: "12418",
+    trainName: "Prayagraj Express",
+    trainType: "Superfast",
+    from: "New Delhi",
+    to: "Prayagraj",
+    departureTime: "10:10 PM",
+    arrivalTime: "06:50 AM",
+    duration: "8h 40m",
+    price: 980,
+    rating: 4.7,
+    boardingStations: ["New Delhi Railway Station", "Ghaziabad"],
+    droppingStations: ["Prayagraj Junction", "Subedarganj"],
+    availableSeats: 118,
+    classes: ["SL", "3A", "2A"]
+  },
+  {
+    _id: "680e75b20000000000000069",
+    trainNumber: "14210",
+    trainName: "Lucknow Prayagraj Intercity",
+    trainType: "Intercity",
+    from: "Lucknow",
+    to: "Prayagraj",
+    departureTime: "07:30 AM",
+    arrivalTime: "12:20 PM",
+    duration: "4h 50m",
+    price: 360,
+    rating: 4.4,
+    boardingStations: ["Lucknow Charbagh", "Rae Bareli"],
+    droppingStations: ["Prayagraj Junction"],
+    availableSeats: 145,
     classes: ["2S", "CC"]
   }
 ];

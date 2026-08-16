@@ -72,17 +72,6 @@ const syncGuides = async () => {
 export const ensureSeedData = async () => {
   if (process.env.DISABLE_AUTO_SEED === "true") return;
 
-  const [hotels, restaurants, places, buses, trains, packages] = await Promise.all([
-    Hotel.countDocuments(),
-    Restaurant.countDocuments(),
-    TouristPlace.countDocuments(),
-    Bus.countDocuments(),
-    Train.countDocuments(),
-    Package.countDocuments()
-  ]);
-
-  if (hotels && restaurants && places && buses && trains && packages) return;
-
   await upsertById(Hotel, hotelSeeds);
   await upsertById(Restaurant, restaurantSeeds);
   await upsertById(TouristPlace, placeSeeds);
@@ -92,5 +81,5 @@ export const ensureSeedData = async () => {
   await syncRooms();
   await syncGuides();
 
-  console.log("Seed data ensured for empty MongoDB collections");
+  console.log("Seed data ensured for MongoDB collections");
 };
