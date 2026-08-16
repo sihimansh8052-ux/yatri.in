@@ -83,6 +83,61 @@ const findUserByCredential = async (credential) => {
 const findUserById = async (id) =>
   isDatabaseConnected() ? User.findById(id).select("-password") : fallbackStore.findUserById(id);
 
+const fallbackDemoProfiles = {
+  "demo@yatri.in": {
+    name: "Demo Traveler",
+    email: "demo@yatri.in",
+    mobile: "+919999999001",
+    password: "password123",
+    role: "traveler",
+    country: "India",
+    state: "Delhi",
+    city: "New Delhi",
+    isEmailVerified: true
+  },
+  "admin@yatri.in": {
+    name: "Yatri Admin",
+    email: "admin@yatri.in",
+    mobile: "+919999999002",
+    password: "password123",
+    role: "admin",
+    country: "India",
+    state: "Delhi",
+    city: "New Delhi",
+    isEmailVerified: true
+  },
+  "asha@yatri.in": {
+    name: "Asha Sharma",
+    email: "asha@yatri.in",
+    mobile: "+919876543210",
+    password: "password123",
+    role: "tour_guide",
+    country: "India",
+    state: "Delhi",
+    city: "New Delhi",
+    isEmailVerified: true
+  },
+  "owner@yatri.in": {
+    name: "Heritage Stays Partner",
+    email: "owner@yatri.in",
+    mobile: "+919999999003",
+    password: "password123",
+    role: "hotel_owner",
+    country: "India",
+    state: "Rajasthan",
+    city: "Jaipur",
+    isEmailVerified: true
+  }
+};
+
+const getFallbackDemoUser = async (credential, password) => {
+  if (isDatabaseConnected() || password !== "password123") return null;
+  const email = String(credential || "").trim().toLowerCase();
+  const demo = fallbackDemoProfiles[email];
+  if (!demo) return null;
+  return fallbackStore.findUserByEmail(email) || fallbackStore.createUser(demo);
+};
+
 export const signup = async (req, res) => {
   try {
     const {
@@ -155,11 +210,19 @@ export const login = async (req, res) => {
   try {
     const credential = req.body.email || req.body.identifier || req.body.mobile;
     const { password, rememberMe = false } = req.body;
-    const user = await findUserByCredential(credential);
+    let user = await findUserByCredential(credential);
 
-    const validPassword = isDatabaseConnected()
+    let validPassword = isDatabaseConnected()
       ? user && (await user.matchPassword(password))
       : user && (await fallbackStore.comparePassword(user, password));
+
+    if (!validPassword) {
+      const fallbackDemoUser = await getFallbackDemoUser(credential, password);
+      if (fallbackDemoUser) {
+        user = fallbackDemoUser;
+        validPassword = true;
+      }
+    }
 
     if (!user || !validPassword) {
       return res.status(401).json({ message: "Invalid email or password" });
