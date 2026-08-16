@@ -95,8 +95,8 @@ If `GOOGLE_MAPS_API_KEY` is set in the backend, hotel/restaurant/place discovery
 
 ## Sample Data
 
-- JavaScript seeds: [backend/src/data/sampleData.js](C:\Users\Administrator\Desktop\yatri.in\backend\src\data\sampleData.js)
-- JSON sample: [backend/src/data/sample-data.json](C:\Users\Administrator\Desktop\yatri.in\backend\src\data\sample-data.json)
+- JavaScript seeds: [backend/src/data/sampleData.js](backend/src/data/sampleData.js)
+- JSON sample: [backend/src/data/sample-data.json](backend/src/data/sample-data.json)
 
 ## Deployment
 
