@@ -146,6 +146,7 @@ export const signup = async (req, res) => {
     const payload = await authPayload(user, res, rememberMe);
     res.status(201).json({ ...payload, devOtp: process.env.NODE_ENV === "production" ? undefined : otp });
   } catch (error) {
+    console.error("Signup failed", error);
     res.status(500).json({ message: error.code === 11000 ? "Email already in use" : "Unable to create account" });
   }
 };
@@ -230,6 +231,7 @@ export const gitHubSignIn = async (req, res) => {
 
     res.json(await authPayload(user, res, rememberMe));
   } catch (_error) {
+    console.error("GitHub sign in failed", _error);
     res.status(500).json({ message: "GitHub sign in failed" });
   }
 };

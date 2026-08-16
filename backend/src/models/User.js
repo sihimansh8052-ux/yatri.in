@@ -71,7 +71,7 @@ const userSchema = new mongoose.Schema(
     rating: { type: Number, default: 4.5 },
     availability: { type: Boolean, default: true },
     bio: String,
-    provider: { type: String, enum: ["local", "google"], default: "local" },
+    provider: { type: String, enum: ["local", "google", "github"], default: "local" },
     googleId: String,
     isEmailVerified: { type: Boolean, default: false },
     emailOtp: String,
