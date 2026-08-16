@@ -53,6 +53,10 @@ const testimonials = [
 export default function HomePage({ user }) {
   useSeo("Yatri.in | India's Luxury Travel Booking Ecosystem");
   const [highlights, setHighlights] = useState(null);
+  const topPlaces = Array.isArray(highlights?.topPlaces) ? highlights.topPlaces.filter(Boolean) : [];
+  const trendingDestinations = Array.isArray(highlights?.trendingDestinations) ? highlights.trendingDestinations.filter(Boolean) : [];
+  const localExperiences = Array.isArray(highlights?.localExperiences) ? highlights.localExperiences.filter(Boolean) : [];
+  const foodNearTajMahal = Array.isArray(highlights?.foodNearTajMahal) ? highlights.foodNearTajMahal.filter(Boolean) : [];
 
   useEffect(() => {
     api.get("/discover/highlights").then(({ data }) => setHighlights(data)).catch(() => setHighlights(null));
@@ -111,24 +115,24 @@ export default function HomePage({ user }) {
           ) : (
             <>
               <div className="mt-8 grid gap-5 md:grid-cols-2 xl:grid-cols-4">
-                {highlights.topPlaces.map((item) => <ListingCard key={item._id} item={{ ...item, entityType: "place" }} />)}
+                {topPlaces.map((item) => <ListingCard key={item._id} item={{ ...item, entityType: "place" }} />)}
               </div>
 
               <div className="mt-10 grid gap-6 lg:grid-cols-3">
                 <InfoPanel icon={Flame} color="text-amber-500" title="Trending Destinations">
-                  {highlights.trendingDestinations.map((item) => (
+                  {trendingDestinations.map((item) => (
                     <MiniLink key={item._id} item={item} />
                   ))}
                 </InfoPanel>
 
                 <InfoPanel icon={MapPinned} color="text-sky-500" title="Local Experiences">
-                  {highlights.localExperiences.map((item) => (
-                    <MiniLink key={item._id} item={item} subtitle={item.tags?.slice(0, 3).join(", ")} />
+                  {localExperiences.map((item) => (
+                    <MiniLink key={item._id} item={item} subtitle={Array.isArray(item.tags) ? item.tags.slice(0, 3).join(", ") : ""} />
                   ))}
                 </InfoPanel>
 
                 <InfoPanel icon={UtensilsCrossed} color="text-rose-500" title="Food Trails Near Taj Mahal">
-                  {highlights.foodNearTajMahal.map((item) => (
+                  {foodNearTajMahal.map((item) => (
                     <div key={item._id} className="rounded-xl bg-slate-50 p-3 dark:bg-slate-950">
                       <p className="font-bold text-sm text-slate-800 dark:text-slate-100">{item.name}</p>
                       <p className="mt-1 text-xs text-slate-500">{item.suggestion}</p>

@@ -5,8 +5,11 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Yatri.in</title>
     <script>
+      const yatriApiBaseUrl = "%VITE_API_BASE_URL%";
+      const yatriLogUrl = yatriApiBaseUrl && !yatriApiBaseUrl.startsWith("%") ? `${yatriApiBaseUrl}/log-error` : null;
       window.addEventListener('error', function(e) {
-        fetch('http://localhost:5000/api/log-error', {
+        if (!yatriLogUrl) return;
+        fetch(yatriLogUrl, {
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },
           body: JSON.stringify({
@@ -20,7 +23,8 @@
         }).catch(() => {});
       });
       window.addEventListener('unhandledrejection', function(e) {
-        fetch('http://localhost:5000/api/log-error', {
+        if (!yatriLogUrl) return;
+        fetch(yatriLogUrl, {
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },
           body: JSON.stringify({
